@@ -9,9 +9,10 @@ import { getGenres } from '../services/fakeGenreService';
 export default class Movies extends Component {
   state = {
     movies: getMovies(),
-    genres: getGenres(),
+    genres: [{ name: 'All genres' }, ...getGenres()],
     pageSize: 4,
     currentPage: 1,
+    selectedGenre: '',
   };
 
   handleDelete = (movie) => {
@@ -21,6 +22,7 @@ export default class Movies extends Component {
 
   handleGenreSelect = (genre) => {
     console.log(genre);
+    this.setState({ selectedGenre: genre, currentPage: 1 });
   };
 
   handleLike = (movie) => {
@@ -36,8 +38,17 @@ export default class Movies extends Component {
   };
   render() {
     const { length: count } = this.state.movies;
-    const { movies: allMovies, currentPage, pageSize } = this.state;
-    const movies = paginate(allMovies, currentPage, pageSize);
+    const {
+      movies: allMovies,
+      currentPage,
+      pageSize,
+      selectedGenre,
+    } = this.state;
+    const filtered =
+      selectedGenre && selectedGenre._id
+        ? allMovies.filter((m) => m.genre._id === selectedGenre._id)
+        : allMovies;
+    const movies = paginate(filtered, currentPage, pageSize);
     if (count === 0) return <p>There are no movies in DB.</p>;
     return (
       <div className="row">
@@ -47,10 +58,11 @@ export default class Movies extends Component {
             onItemSelect={this.handleGenreSelect}
             textProperty="name"
             valueProperty="_id"
+            selectedItem={selectedGenre}
           />
         </div>
         <div className="col">
-          <p>Showing {count} movies in the database.</p>
+          <p>Showing {filtered.length} movies in the database.</p>
           <table className="table">
             <thead>
               <tr>
@@ -88,7 +100,7 @@ export default class Movies extends Component {
             </tbody>
           </table>
           <Pagination
-            itemsCount={count}
+            itemsCount={filtered.length}
             pageSize={this.state.pageSize}
             onPageChange={this.handlePageChange}
             currentPage={this.state.currentPage}
