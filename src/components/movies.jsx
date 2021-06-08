@@ -19,14 +19,18 @@ export default class Movies extends Component {
     selectedGenre: '',
     searchQuery: '',
     sortColumn: { path: 'title', order: 'asc' },
+    isLoading: false,
   };
 
   async componentDidMount() {
+    this.setState({ isLoading: true });
     const { data } = await getGenres();
     const genres = [{ _id: '', name: 'All Genres' }, ...data];
 
-    const { data: movies } = await getMovies();
-    this.setState({ genres, movies });
+    setTimeout(async () => {
+      const { data: movies } = await getMovies();
+      this.setState({ genres, movies, isLoading: false });
+    }, 5000);
   }
 
   handleDelete = async (movie) => {

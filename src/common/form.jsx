@@ -81,4 +81,18 @@ export default class Form extends Component {
       />
     );
   };
+
+  RenderInput = (name, label, type = 'text') => {
+    const { data, errors } = this.state;
+    return (
+      <Input
+        type={type}
+        name={name}
+        value={data[name]}
+        label={label}
+        onChange={this.handleChange}
+        error={errors[name]}
+      />
+    );
+  };
 }
