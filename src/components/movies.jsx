@@ -1,6 +1,7 @@
-import React, { Component } from 'react';
+import React, { Component, useMemo } from 'react';
 import _ from 'lodash';
 import { toast } from 'react-toastify';
+import Skeleton from 'react-loading-skeleton';
 import { deleteMovie, getMovies } from '../services/movieService';
 import Pagination from '../common/pagination';
 import paginate from '../utils/paginate';
@@ -9,6 +10,7 @@ import { getGenres } from '../services/genreService';
 import MoviesTable from './moviesTable';
 import { Link } from 'react-router-dom';
 import SearchBox from '../common/searchBox';
+import withSkeleton from '../hocs/withSkeleton';
 
 export default class Movies extends Component {
   state = {
@@ -22,6 +24,13 @@ export default class Movies extends Component {
     isLoading: false,
   };
 
+  styles = {
+    columnSkeleton: {
+      display: 'flex',
+      flexDirection: 'column',
+    },
+  };
+
   async componentDidMount() {
     this.setState({ isLoading: true });
     const { data } = await getGenres();
@@ -30,7 +39,7 @@ export default class Movies extends Component {
     setTimeout(async () => {
       const { data: movies } = await getMovies();
       this.setState({ genres, movies, isLoading: false });
-    }, 5000);
+    }, 2000);
   }
 
   handleDelete = async (movie) => {
@@ -93,12 +102,58 @@ export default class Movies extends Component {
 
     return { totalCount: filtered.length, data: movies };
   };
+
+  MovieSkeleton = () => {
+    return (
+      <div className="row">
+        <div className="col-3">
+          <Skeleton height={300} width={200}></Skeleton>
+        </div>
+        <div style={{ display: 'flex', flexDirection: 'column' }}>
+          <Skeleton
+            height={50}
+            width={120}
+            style={{ marginBottom: 10 }}
+          ></Skeleton>
+          <Skeleton
+            height={30}
+            width={120}
+            style={{ marginBottom: 10 }}
+          ></Skeleton>
+          <Skeleton
+            height={50}
+            width={800}
+            style={{ marginBottom: 10 }}
+          ></Skeleton>
+          <Skeleton
+            height={270}
+            width={800}
+            style={{ marginBottom: 10 }}
+          ></Skeleton>
+          <Skeleton
+            height={50}
+            width={150}
+            style={{ marginBottom: 10 }}
+          ></Skeleton>
+        </div>
+      </div>
+    );
+  };
   render() {
     const { length: count } = this.state.movies;
-    const { selectedGenre, sortColumn, searchQuery } = this.state;
-    const { user } = this.props;
+    const { selectedGenre, sortColumn, searchQuery, isLoading } = this.state;
+    const { user = {} } = this.props;
 
-    if (count === 0) return <p>There are no movies in DB.</p>;
+    // const ListGroupSkeleton = withSkeleton(ListGroup, isLoading, {
+    //   style: { height: 200, width: 200 },
+    // });
+
+    // const LinkSkeleton = withSkeleton(Link, isLoading, {
+    //   style: this.styles.linkSkeletonStyles,
+    // });
+
+    // if (count === 0) return <p>There are no movies in DB.</p>;
+    if (isLoading) return this.MovieSkeleton();
     const { totalCount, data: movies } = this.getPageData();
     return (
       <div className="row">

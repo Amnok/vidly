@@ -26,8 +26,8 @@ export default function NavBar({ user }) {
             </NavLink>
           </li>
           <li className="nav-item">
-            <NavLink className="nav-link" to="/customers">
-              Customers
+            <NavLink className="nav-link" to="/user-info">
+              User Info
             </NavLink>
           </li>
           <li className="nav-item">
