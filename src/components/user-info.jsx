@@ -1,6 +1,7 @@
 import React from 'react';
 import { Formik, Form, Field, ErrorMessage } from 'formik';
 import * as yup from 'yup';
+import { options } from 'joi-browser';
 
 export default function userInfo() {
   const initialValues = {
@@ -11,8 +12,8 @@ export default function userInfo() {
     language: '',
   };
   const gender = [
-    { key: 'male', value: 'male' },
-    { key: 'female', value: 'female' },
+    { key: 'male', value: 'MALE' },
+    { key: 'female', value: 'FEMALE' },
   ];
 
   const languages = [
@@ -28,6 +29,7 @@ export default function userInfo() {
     firstName: yup.string().required(),
     lastName: yup.string().required(),
     address: yup.string().required(),
+    gender: yup.string().required(),
   });
 
   return (
@@ -61,6 +63,9 @@ export default function userInfo() {
               }}
             </Field>
           </div>
+
+          {/* input */}
+
           <div className="form-group">
             <label htmlFor="lastName">LastName</label>
             <Field name="lastName">
@@ -84,6 +89,8 @@ export default function userInfo() {
               }}
             </Field>
           </div>
+
+          {/* text area */}
 
           <div className="form-group">
             <label htmlFor="address">Address</label>
@@ -109,34 +116,40 @@ export default function userInfo() {
             </Field>
           </div>
 
+          {/* radio button */}
+
           <div className="form-group">
             <label htmlFor="gender">Gender</label>
             <Field name="gender">
               {(props) => {
                 const { field, form, meta } = props;
                 console.log(props);
-                gender.map((g) => (
-                  <div>
+                return gender.map((option) => (
+                  <div key={option.key} style={{ marginLeft: 20 }}>
                     <input
-                      class="form-check-input"
                       type="radio"
-                      name="gender"
-                      id={g.value}
-                      value={g.value}
+                      id={option.value}
                       {...field}
-                      checked={field.value === g.value}
+                      class="form-check-input"
+                      value={option.value}
+                      checked={field.value === option.value}
                     />
-                    <label class="form-check-label" htmlFor={g.value}>
-                      {g.key}
+                    <label class="form-check-label" htmlFor={option.value}>
+                      {option.key}
                     </label>
-                    {meta.touched && meta.error ? (
-                      <div className="alert alert-danger">{meta.error}</div>
-                    ) : null}
                   </div>
                 ));
               }}
             </Field>
+            <ErrorMessage name="gender">
+              {(error) => {
+                return <div className="alert alert-danger">{error}</div>;
+              }}
+            </ErrorMessage>
           </div>
+
+          {/* dropdown */}
+
           <button type="submit" class="btn btn-primary">
             Submit
           </button>
