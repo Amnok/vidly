@@ -8,7 +8,6 @@ import Select from './formik/select';
 
 export default function UserInfo() {
   const [initial, setInitial] = useState({});
-  const [isLoading, setisLoading] = useState(false);
 
   const getInitialValues = async () => {
     return new Promise((resolve, reject) => {
@@ -31,13 +30,6 @@ export default function UserInfo() {
     };
     getData();
   }, []);
-  const initialValues = {
-    firstName: '',
-    lastName: '',
-    address: '',
-    gender: '',
-    language: '',
-  };
 
   const gender = [
     { key: 'male', value: 'MALE' },
@@ -68,9 +60,8 @@ export default function UserInfo() {
         onSubmit={onSubmit}
         validationSchema={validationSchema}
         enableReinitialize
-        isLoading={isLoading}
       >
-        <Form isLoading={isLoading}>
+        <Form>
           <Input label="FirstName" name="firstName" type="text" />
           <Input label="LastName" name="lastName" type="text" />
           <TextArea label="Address" name="address" />
